@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Task Management App</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Task Manager</h1>
+        <!-- Search and Filter Controls -->
+        <div class="controls">
+            <input type="text" id="searchInput" placeholder="Search tasks...">
+            <select id="filterPriority">
+                <option value="all">All Priorities</option>
+                <option value="low">Low Priority</option>
+                <option value="medium">Medium Priority</option>
+                <option value="high">High Priority</option>
+            </select>
+            <select id="sortBy">
+                <option value="date">Sort by Date</option>
+                <option value="priority">Sort by Priority</option>
+                <option value="title">Sort by Title</option>
+            </select>
+        </div>
+        <!-- Task Input Form -->
+        <form id="taskForm">
+            <input type="text" id="taskTitle" placeholder="Task
+Title" required>
+            <textarea id="taskDescription" placeholder="Task
+Description"></textarea>
+            <select id="taskPriority">
+                <option value="low">Low Priority</option>
+                <option value="medium">Medium Priority</option>
+                <option value="high">High Priority</option>
+            </select>
+            <input type="date" id="taskDueDate" required>
+            <button type="submit">Add Task</button>
+        </form>
+        <!-- Task List Container -->
+        <div id="taskList"></div>
+    </div>
+    <!-- CSS (styles.css) -->
+    <script src="taskManager.js"></script>
+</body>
+
+</html>
