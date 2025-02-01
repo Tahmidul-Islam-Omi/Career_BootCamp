@@ -2,6 +2,7 @@ import { Button, Container, Typography } from '@mui/material';
 import { useState } from 'react';
 import TaskDialog from '../components/TaskDialog';
 import TaskList from '../components/TaskList';
+import TaskSearch from '../components/TaskSearch';
 import TaskSortControls from '../components/TaskSortControls';
 import TaskUpdateDialog from '../components/TaskUpdateDialog';
 
@@ -18,6 +19,7 @@ const TodoApp = () => {
         priority: 1,
     });
     const [currentTask, setCurrentTask] = useState(null);
+    const [searchTerm, setSearchTerm] = useState('');
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -76,6 +78,10 @@ const TodoApp = () => {
         });
     };
 
+    const filteredTasks = getSortedTasks().filter(task =>
+        task.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     return (
         <Container maxWidth="sm">
             <Typography 
@@ -108,6 +114,8 @@ const TodoApp = () => {
                 Create Task
             </Button>
 
+            <TaskSearch searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+
             <TaskSortControls 
                 sortBy={sortBy}
                 setSortBy={setSortBy}
@@ -115,7 +123,7 @@ const TodoApp = () => {
                 setSortOrder={setSortOrder}
             />
 
-            <TaskList tasks={getSortedTasks()} onEdit={handleEdit} onDelete={handleDelete} />
+            <TaskList tasks={filteredTasks} onEdit={handleEdit} onDelete={handleDelete} />
             
             <TaskDialog 
                 open={open}
