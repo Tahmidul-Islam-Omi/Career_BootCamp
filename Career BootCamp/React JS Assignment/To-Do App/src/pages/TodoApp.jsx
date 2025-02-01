@@ -2,10 +2,13 @@ import { Button, Container, Typography } from '@mui/material';
 import { useState } from 'react';
 import TaskDialog from '../components/TaskDialog';
 import TaskList from '../components/TaskList';
+import TaskSortControls from '../components/TaskSortControls';
 
 const TodoApp = () => {
     const [tasks, setTasks] = useState([]);
     const [open, setOpen] = useState(false);
+    const [sortBy, setSortBy] = useState('creationTime');
+    const [sortOrder, setSortOrder] = useState('desc');
     const [taskData, setTaskData] = useState({
         name: '',
         description: '',
@@ -19,9 +22,35 @@ const TodoApp = () => {
     };
 
     const handleSubmit = () => {
-        setTasks([...tasks, taskData]);
+        const newTask = {
+            ...taskData,
+            creationTime: new Date().toISOString(),
+        };
+        setTasks([...tasks, newTask]);
         setTaskData({ name: '', description: '', deadline: '', priority: 1 });
         setOpen(false);
+    };
+
+    const getSortedTasks = () => {
+        return [...tasks].sort((a, b) => {
+            let comparison = 0;
+            
+            switch (sortBy) {
+                case 'creationTime':
+                    comparison = new Date(a.creationTime) - new Date(b.creationTime);
+                    break;
+                case 'deadline':
+                    comparison = new Date(a.deadline) - new Date(b.deadline);
+                    break;
+                case 'priority':
+                    comparison = parseInt(a.priority) - parseInt(b.priority);
+                    break;
+                default:
+                    comparison = 0;
+            }
+
+            return sortOrder === 'asc' ? comparison : -comparison;
+        });
     };
 
     return (
@@ -56,7 +85,14 @@ const TodoApp = () => {
                 Create Task
             </Button>
 
-            <TaskList tasks={tasks} />
+            <TaskSortControls 
+                sortBy={sortBy}
+                setSortBy={setSortBy}
+                sortOrder={sortOrder}
+                setSortOrder={setSortOrder}
+            />
+
+            <TaskList tasks={getSortedTasks()} />
             
             <TaskDialog 
                 open={open}
