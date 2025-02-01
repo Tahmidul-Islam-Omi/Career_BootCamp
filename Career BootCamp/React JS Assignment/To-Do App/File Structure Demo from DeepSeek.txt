@@ -1,0 +1,36 @@
+todo-app/
+├── public/
+│   ├── index.html
+│   └── assets/ (logos, images, etc.)
+├── src/
+│   ├── components/ (Reusable UI components)
+│   │   ├── Header.jsx
+│   │   ├── Footer.jsx
+│   │   ├── TaskList.jsx
+│   │   ├── TaskItem.jsx
+│   │   ├── TaskForm.jsx
+│   │   ├── FilterSort.jsx
+│   │   ├── CountdownTimer.jsx
+│   │   ├── AuthForm.jsx (Login/Registration)
+│   │   └── Profile.jsx
+│   ├── pages/ (Page-level components)
+│   │   ├── HomePage.jsx
+│   │   ├── LoginPage.jsx
+│   │   ├── RegisterPage.jsx
+│   │   ├── ProfilePage.jsx
+│   │   └── StatisticsPage.jsx
+│   ├── context/ (React Context for state management)
+│   │   └── AuthContext.js
+│   ├── hooks/ (Custom hooks)
+│   │   └── useTasks.js
+│   ├── utils/ (Utility functions)
+│   │   ├── api.js (API calls)
+│   │   ├── helpers.js (e.g., date formatting)
+│   ├── App.js
+│   ├── index.js
+│   └── styles/
+│       ├── global.css
+│       ├── components/ (Component-specific styles)
+│       └── pages/ (Page-specific styles)
+├── package.json
+└── README.md
