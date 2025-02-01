@@ -1,7 +1,7 @@
-import { AccessTime, Flag } from '@mui/icons-material';
-import { Box, Card, CardContent, Chip, Stack, Typography } from '@mui/material';
+import { AccessTime, Edit, Flag } from '@mui/icons-material';
+import { Box, Card, CardContent, Chip, IconButton, Stack, Typography } from '@mui/material';
 
-const TaskCard = ({ task }) => {
+const TaskCard = ({ task, onEdit }) => {
     const getPriorityColor = (priority) => {
         const num = parseInt(priority);
         if (num >= 7) return 'error';
@@ -22,7 +22,7 @@ const TaskCard = ({ task }) => {
             }}
         >
             <CardContent>
-                <Box sx={{ mb: 2 }}>
+                <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <Typography 
                         variant="h6" 
                         sx={{ 
@@ -32,6 +32,9 @@ const TaskCard = ({ task }) => {
                     >
                         {task.name}
                     </Typography>
+                    <IconButton onClick={() => onEdit(task)}>
+                        <Edit color="primary" />
+                    </IconButton>
                 </Box>
 
                 <Typography 

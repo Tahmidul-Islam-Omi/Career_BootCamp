@@ -3,10 +3,12 @@ import { useState } from 'react';
 import TaskDialog from '../components/TaskDialog';
 import TaskList from '../components/TaskList';
 import TaskSortControls from '../components/TaskSortControls';
+import TaskUpdateDialog from '../components/TaskUpdateDialog';
 
 const TodoApp = () => {
     const [tasks, setTasks] = useState([]);
     const [open, setOpen] = useState(false);
+    const [openUpdate, setOpenUpdate] = useState(false);
     const [sortBy, setSortBy] = useState('creationTime');
     const [sortOrder, setSortOrder] = useState('desc');
     const [taskData, setTaskData] = useState({
@@ -15,6 +17,7 @@ const TodoApp = () => {
         deadline: '',
         priority: 1,
     });
+    const [currentTask, setCurrentTask] = useState(null);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -29,6 +32,21 @@ const TodoApp = () => {
         setTasks([...tasks, newTask]);
         setTaskData({ name: '', description: '', deadline: '', priority: 1 });
         setOpen(false);
+    };
+
+    const handleUpdateSubmit = () => {
+        const updatedTasks = tasks.map(task => 
+            task.name === currentTask.name ? { ...taskData, creationTime: task.creationTime } : task
+        );
+        setTasks(updatedTasks);
+        setTaskData({ name: '', description: '', deadline: '', priority: 1 });
+        setOpenUpdate(false);
+    };
+
+    const handleEdit = (task) => {
+        setCurrentTask(task);
+        setTaskData(task);
+        setOpenUpdate(true);
     };
 
     const getSortedTasks = () => {
@@ -92,7 +110,7 @@ const TodoApp = () => {
                 setSortOrder={setSortOrder}
             />
 
-            <TaskList tasks={getSortedTasks()} />
+            <TaskList tasks={getSortedTasks()} onEdit={handleEdit} />
             
             <TaskDialog 
                 open={open}
@@ -100,6 +118,14 @@ const TodoApp = () => {
                 taskData={taskData}
                 onChange={handleChange}
                 onSubmit={handleSubmit}
+            />
+
+            <TaskUpdateDialog 
+                open={openUpdate}
+                onClose={() => setOpenUpdate(false)}
+                taskData={taskData}
+                onChange={handleChange}
+                onSubmit={handleUpdateSubmit}
             />
         </Container>
     );
