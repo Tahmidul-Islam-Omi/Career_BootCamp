@@ -49,6 +49,11 @@ const TodoApp = () => {
         setOpenUpdate(true);
     };
 
+    const handleDelete = (taskName) => {
+        const updatedTasks = tasks.filter(task => task.name !== taskName);
+        setTasks(updatedTasks);
+    };
+
     const getSortedTasks = () => {
         return [...tasks].sort((a, b) => {
             let comparison = 0;
@@ -110,7 +115,7 @@ const TodoApp = () => {
                 setSortOrder={setSortOrder}
             />
 
-            <TaskList tasks={getSortedTasks()} onEdit={handleEdit} />
+            <TaskList tasks={getSortedTasks()} onEdit={handleEdit} onDelete={handleDelete} />
             
             <TaskDialog 
                 open={open}

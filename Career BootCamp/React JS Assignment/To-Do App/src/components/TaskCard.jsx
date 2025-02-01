@@ -1,7 +1,8 @@
-import { AccessTime, Edit, Flag } from '@mui/icons-material';
+import { AccessTime, Delete, Edit, Flag } from '@mui/icons-material';
 import { Box, Card, CardContent, Chip, IconButton, Stack, Typography } from '@mui/material';
+import CountdownTimer from './CountdownTimer';
 
-const TaskCard = ({ task, onEdit }) => {
+const TaskCard = ({ task, onEdit, onDelete }) => {
     const getPriorityColor = (priority) => {
         const num = parseInt(priority);
         if (num >= 7) return 'error';
@@ -32,9 +33,14 @@ const TaskCard = ({ task, onEdit }) => {
                     >
                         {task.name}
                     </Typography>
-                    <IconButton onClick={() => onEdit(task)}>
-                        <Edit color="primary" />
-                    </IconButton>
+                    <Box>
+                        <IconButton onClick={() => onEdit(task)}>
+                            <Edit color="primary" />
+                        </IconButton>
+                        <IconButton onClick={() => onDelete(task.name)}>
+                            <Delete color="error" />
+                        </IconButton>
+                    </Box>
                 </Box>
 
                 <Typography 
@@ -46,6 +52,8 @@ const TaskCard = ({ task, onEdit }) => {
                 >
                     {task.description}
                 </Typography>
+
+                <CountdownTimer deadline={task.deadline} />
 
                 <Stack 
                     direction="row" 
