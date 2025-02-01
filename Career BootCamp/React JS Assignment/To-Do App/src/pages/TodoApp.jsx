@@ -1,5 +1,6 @@
 import { Button, Container, Typography } from '@mui/material';
 import { useState } from 'react';
+import PriorityFilter from '../components/PriorityFilter';
 import TaskDialog from '../components/TaskDialog';
 import TaskList from '../components/TaskList';
 import TaskSearch from '../components/TaskSearch';
@@ -20,6 +21,7 @@ const TodoApp = () => {
     });
     const [currentTask, setCurrentTask] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
+    const [selectedPriority, setSelectedPriority] = useState('');
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -78,9 +80,11 @@ const TodoApp = () => {
         });
     };
 
-    const filteredTasks = getSortedTasks().filter(task =>
-        task.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredTasks = getSortedTasks().filter(task => {
+        const matchesSearch = task.name.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesPriority = selectedPriority ? task.priority === parseInt(selectedPriority) : true;
+        return matchesSearch && matchesPriority;
+    });
 
     return (
         <Container maxWidth="sm">
@@ -115,6 +119,7 @@ const TodoApp = () => {
             </Button>
 
             <TaskSearch searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+            <PriorityFilter selectedPriority={selectedPriority} setSelectedPriority={setSelectedPriority} />
 
             <TaskSortControls 
                 sortBy={sortBy}
