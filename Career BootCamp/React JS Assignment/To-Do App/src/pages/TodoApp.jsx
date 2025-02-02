@@ -1,6 +1,7 @@
 import { Button, Container, Typography } from '@mui/material';
 import { useState } from 'react';
 import PriorityFilter from '../components/PriorityFilter';
+import Statistics from '../components/Statistics';
 import TaskDialog from '../components/TaskDialog';
 import TaskList from '../components/TaskList';
 import TaskSearch from '../components/TaskSearch';
@@ -32,6 +33,7 @@ const TodoApp = () => {
         const newTask = {
             ...taskData,
             creationTime: new Date().toISOString(),
+            completed: false,
         };
         setTasks([...tasks, newTask]);
         setTaskData({ name: '', description: '', deadline: '', priority: 1 });
@@ -55,6 +57,15 @@ const TodoApp = () => {
 
     const handleDelete = (taskName) => {
         const updatedTasks = tasks.filter(task => task.name !== taskName);
+        setTasks(updatedTasks);
+    };
+
+    const handleToggleComplete = (taskName) => {
+        const updatedTasks = tasks.map(task => 
+            task.name === taskName 
+                ? { ...task, completed: !task.completed }
+                : task
+        );
         setTasks(updatedTasks);
     };
 
@@ -102,6 +113,8 @@ const TodoApp = () => {
                 To-Do List
             </Typography>
             
+            <Statistics tasks={tasks} />
+
             <Button 
                 variant="contained" 
                 color="primary" 
@@ -128,7 +141,12 @@ const TodoApp = () => {
                 setSortOrder={setSortOrder}
             />
 
-            <TaskList tasks={filteredTasks} onEdit={handleEdit} onDelete={handleDelete} />
+            <TaskList 
+                tasks={filteredTasks} 
+                onEdit={handleEdit} 
+                onDelete={handleDelete}
+                onToggleComplete={handleToggleComplete}
+            />
             
             <TaskDialog 
                 open={open}
