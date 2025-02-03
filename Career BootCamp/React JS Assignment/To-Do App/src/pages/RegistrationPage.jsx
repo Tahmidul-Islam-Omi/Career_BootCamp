@@ -8,8 +8,10 @@ import {
 } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const RegistrationPage = () => {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -24,29 +26,40 @@ const RegistrationPage = () => {
 
     const mutation = useMutation({
         mutationFn: async (requestBody) => {
+            // Prepare the request body as JSON
             const response = await fetch('http://3.109.211.104:8001/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(requestBody),
+                body: JSON.stringify({
+                    name: requestBody.name,
+                    email: requestBody.email,
+                    phone: requestBody.phone,
+                    username: requestBody.username,
+                    password: requestBody.password,
+                    // Send profile_picture as a string if needed, or omit it if not required
+                    profile_picture: requestBody.profilePicture ? requestBody.profilePicture.name : null
+                }),
             });
             
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Registration failed');
             }
             return response.json();
         },
         onSuccess: (data) => {
             console.log('Registration successful:', data);
+            navigate('/login'); // Navigate to login page after successful registration
         },
         onError: (error) => {
             console.error('Registration failed:', error);
+            setError(error.message || 'Registration failed. Please try again.');
         }
     });
 
     const handleChange = (e) => {
-        // form data variable working here
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
         if (name === 'confirmPassword') {
@@ -72,7 +85,7 @@ const RegistrationPage = () => {
             phone: formData.phone,
             username: formData.username,
             password: formData.password,
-            profile_picture: formData.profilePicture,
+            profilePicture: formData.profilePicture, // Keep the file reference if needed
         };
 
         mutation.mutate(requestBody);
@@ -85,10 +98,15 @@ const RegistrationPage = () => {
                     variant="h4"
                     component="h1"
                     gutterBottom
-                    sx={{ textAlign: 'center', color: 'blue' }}
+                    sx={{ textAlign: 'center', color: 'primary.main' }}
                 >
                     Registration
                 </Typography>
+                {error && (
+                    <Typography color="error" sx={{ mb: 2, textAlign: 'center' }}>
+                        {error}
+                    </Typography>
+                )}
                 <form onSubmit={handleSubmit}>
                     <TextField
                         fullWidth
@@ -149,20 +167,36 @@ const RegistrationPage = () => {
                         error={!!error}
                         helperText={error}
                     />
-                    <Typography variant="subtitle1" gutterBottom>
-                        Profile Picture
-                    </Typography>
-                    <input
-                        id="profile-picture-upload"
-                        name="profilePicture"
-                        type="file"
-                        accept="image/*"
-                        onChange={handleFileChange}
-                        style={{ display: 'block' }}
-                    />
-                    <Box display="flex" justifyContent="center">
-                        <Button type="submit" variant="outlined" color="primary">
+                    <Box sx={{ mt: 2, mb: 2 }}>
+                        <Typography variant="subtitle1" gutterBottom>
+                            Profile Picture
+                        </Typography>
+                        <input
+                            id="profile-picture-upload"
+                            name="profilePicture"
+                            type="file"
+                            accept="image/*"
+                            onChange={handleFileChange}
+                            style={{ display: 'block' }}
+                        />
+                    </Box>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <Button 
+                            type="submit" 
+                            variant="contained" 
+                            color="primary"
+                            sx={{ borderRadius: 2 }}
+                        >
                             Register
+                        </Button>
+                        <Button 
+                            type="submit"
+                            variant="contained" 
+                            color="primary" 
+                            onClick={() => navigate('/login')}
+                            sx={{ borderRadius: 2 }}
+                        >
+                            Login
                         </Button>
                     </Box>
                 </form>
