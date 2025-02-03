@@ -1,4 +1,5 @@
 import { Button, Container, Typography } from '@mui/material';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import PriorityFilter from '../components/PriorityFilter';
 import Statistics from '../components/Statistics';
@@ -9,20 +10,104 @@ import TaskSortControls from '../components/TaskSortControls';
 import TaskUpdateDialog from '../components/TaskUpdateDialog';
 
 const TodoApp = () => {
-    const [tasks, setTasks] = useState([]);
+    const queryClient = useQueryClient();
     const [open, setOpen] = useState(false);
     const [openUpdate, setOpenUpdate] = useState(false);
     const [sortBy, setSortBy] = useState('creationTime');
     const [sortOrder, setSortOrder] = useState('desc');
     const [taskData, setTaskData] = useState({
-        name: '',
+        title: '',
         description: '',
         deadline: '',
-        priority: 1,
+        priority: 0,
     });
     const [currentTask, setCurrentTask] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedPriority, setSelectedPriority] = useState('');
+
+    // Fetch todos
+    const { data: tasks = [], isLoading } = useQuery({
+        queryKey: ['todos'],
+        queryFn: async () => {
+            const token = localStorage.getItem('access_token');
+            const response = await fetch('http://3.109.211.104:8001/todos', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            if (!response.ok) {
+                throw new Error('Failed to fetch todos');
+            }
+            return response.json();
+        }
+    });
+
+    // Create todo mutation
+    const createTodoMutation = useMutation({
+        mutationFn: async (newTodo) => {
+            const token = localStorage.getItem('access_token');
+            const response = await fetch('http://3.109.211.104:8001/todo', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(newTodo)
+            });
+            if (!response.ok) {
+                throw new Error('Failed to create todo');
+            }
+            return response.json();
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries(['todos']);
+            setOpen(false);
+            setTaskData({ title: '', description: '', deadline: '', priority: 0 });
+        }
+    });
+
+    // Update todo mutation
+    const updateTodoMutation = useMutation({
+        mutationFn: async ({ id, updatedTodo }) => {
+            const token = localStorage.getItem('access_token');
+            const response = await fetch(`http://3.109.211.104:8001/todo/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(updatedTodo)
+            });
+            if (!response.ok) {
+                throw new Error('Failed to update todo');
+            }
+            return response.json();
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries(['todos']);
+            setOpenUpdate(false);
+            setTaskData({ title: '', description: '', deadline: '', priority: 0 });
+        }
+    });
+
+    // Delete todo mutation
+    const deleteTodoMutation = useMutation({
+        mutationFn: async (id) => {
+            const token = localStorage.getItem('access_token');
+            const response = await fetch(`http://3.109.211.104:8001/todo/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            if (!response.ok) {
+                throw new Error('Failed to delete todo');
+            }
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries(['todos']);
+        }
+    });
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -30,43 +115,50 @@ const TodoApp = () => {
     };
 
     const handleSubmit = () => {
-        const newTask = {
-            ...taskData,
-            creationTime: new Date().toISOString(),
-            completed: false,
+        const newTodo = {
+            title: taskData.title,
+            description: taskData.description,
+            deadline: taskData.deadline,
+            priority: parseInt(taskData.priority)
         };
-        setTasks([...tasks, newTask]);
-        setTaskData({ name: '', description: '', deadline: '', priority: 1 });
-        setOpen(false);
+        createTodoMutation.mutate(newTodo);
     };
 
     const handleUpdateSubmit = () => {
-        const updatedTasks = tasks.map(task => 
-            task.name === currentTask.name ? { ...taskData, creationTime: task.creationTime } : task
-        );
-        setTasks(updatedTasks);
-        setTaskData({ name: '', description: '', deadline: '', priority: 1 });
-        setOpenUpdate(false);
+        const updatedTodo = {
+            title: taskData.title,
+            description: taskData.description,
+            deadline: taskData.deadline,
+            priority: parseInt(taskData.priority),
+            is_completed: currentTask.is_completed
+        };
+        updateTodoMutation.mutate({ id: currentTask.id, updatedTodo });
     };
 
     const handleEdit = (task) => {
         setCurrentTask(task);
-        setTaskData(task);
+        setTaskData({
+            title: task.title,
+            description: task.description,
+            deadline: task.deadline,
+            priority: task.priority
+        });
         setOpenUpdate(true);
     };
 
-    const handleDelete = (taskName) => {
-        const updatedTasks = tasks.filter(task => task.name !== taskName);
-        setTasks(updatedTasks);
+    const handleDelete = (id) => {
+        deleteTodoMutation.mutate(id);
     };
 
-    const handleToggleComplete = (taskName) => {
-        const updatedTasks = tasks.map(task => 
-            task.name === taskName 
-                ? { ...task, completed: !task.completed }
-                : task
-        );
-        setTasks(updatedTasks);
+    const handleToggleComplete = (task) => {
+        const updatedTodo = {
+            title: task.title,
+            description: task.description,
+            deadline: task.deadline,
+            priority: task.priority,
+            is_completed: !task.is_completed
+        };
+        updateTodoMutation.mutate({ id: task.id, updatedTodo });
     };
 
     const getSortedTasks = () => {
@@ -92,10 +184,12 @@ const TodoApp = () => {
     };
 
     const filteredTasks = getSortedTasks().filter(task => {
-        const matchesSearch = task.name.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesSearch = task.title.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesPriority = selectedPriority ? task.priority === parseInt(selectedPriority) : true;
         return matchesSearch && matchesPriority;
     });
+
+    if (isLoading) return <div>Loading...</div>;
 
     return (
         <Container maxWidth="sm">
