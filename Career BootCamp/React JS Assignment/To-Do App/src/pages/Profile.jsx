@@ -59,25 +59,34 @@ const Profile = () => {
 
     return (
         <Container maxWidth="sm">
-            <Paper elevation={3} sx={{ padding: 3, borderRadius: 2, mt: 4 }}>
-                <Typography variant="h4" component="h1" gutterBottom align="center">
-                    User Profile
-                </Typography>
-                <Box sx={{ mb: 2 }}>
-                    <Typography variant="h6">Name: {userInfo?.name}</Typography>
-                    <Typography variant="h6">Email: {userInfo?.email}</Typography>
-                    <Typography variant="h6">Phone: {userInfo?.phone}</Typography>
-                    <Typography variant="h6">Username: {userInfo?.username}</Typography>
+            <Paper elevation={3} sx={{ padding: 3, borderRadius: 2, mt: 4, display: 'flex', alignItems: 'center' }}>
+                <Box sx={{ flex: 1 }}>
+                    <Typography variant="h4" component="h1" gutterBottom align="center">
+                        User Profile
+                    </Typography>
+                    <Box sx={{ mb: 2 }}>
+                        <Typography variant="h6">Name: {userInfo?.name}</Typography>
+                        <Typography variant="h6">Email: {userInfo?.email}</Typography>
+                        <Typography variant="h6">Phone: {userInfo?.phone}</Typography>
+                        <Typography variant="h6">Username: {userInfo?.username}</Typography>
+                    </Box>
+                    <Button 
+                        variant="contained" 
+                        color="primary" 
+                        onClick={() => setOpenEditDialog(true)}
+                        fullWidth
+                        sx={{ borderRadius: 2 }}
+                    >
+                        Edit Profile
+                    </Button>
                 </Box>
-                <Button 
-                    variant="contained" 
-                    color="primary" 
-                    onClick={() => setOpenEditDialog(true)}
-                    fullWidth
-                    sx={{ borderRadius: 2 }}
-                >
-                    Edit Profile
-                </Button>
+                <Box sx={{ ml: 2 }}>
+                    <img 
+                        src={userInfo?.profile_picture} 
+                        alt="Profile" 
+                        style={{ width: 100, height: 100, borderRadius: '50%' }} // Adjust size and shape as needed
+                    />
+                </Box>
             </Paper>
 
             <EditProfileDialog 
