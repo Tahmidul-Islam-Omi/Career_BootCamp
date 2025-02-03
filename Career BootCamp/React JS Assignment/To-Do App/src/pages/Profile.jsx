@@ -6,7 +6,7 @@ import EditProfileDialog from '../components/EditProfileDialog';
 const Profile = () => {
     const queryClient = useQueryClient();
     const [openEditDialog, setOpenEditDialog] = useState(false);
-    const username = 'Omi'; // You might want to get this from authentication context
+    const username = localStorage.getItem('username'); // Retrieve username from local storage
 
     // Fetch user profile
     const { data: userInfo, isLoading } = useQuery({
@@ -53,6 +53,9 @@ const Profile = () => {
     };
 
     if (isLoading) return <div>Loading...</div>;
+    if (updateProfileMutation.isError) {
+        return <div>Error updating profile: {updateProfileMutation.error.message}</div>;
+    }
 
     return (
         <Container maxWidth="sm">

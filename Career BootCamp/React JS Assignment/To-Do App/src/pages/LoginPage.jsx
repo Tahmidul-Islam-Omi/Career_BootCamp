@@ -37,6 +37,8 @@ const LoginPage = () => {
         onSuccess: (data) => {
             // Save the access token for future use
             localStorage.setItem('access_token', data.access_token);
+            // Save the username in local storage
+            localStorage.setItem('username', data.username);
             // Navigate to the To-Do page
             navigate('/todo');
         },
