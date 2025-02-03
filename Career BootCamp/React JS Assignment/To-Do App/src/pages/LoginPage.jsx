@@ -6,12 +6,44 @@ import {
     TextField,
     Typography
 } from '@mui/material';
+import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         username: '',
         password: ''
+    });
+
+    const mutation = useMutation({
+        mutationFn: async (loginData) => {
+            const response = await fetch('http://3.109.211.104:8001/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(loginData),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Login failed');
+            }
+
+            return response.json();
+        },
+        onSuccess: (data) => {
+            // Save the access token for future use
+            localStorage.setItem('access_token', data.access_token);
+            // Navigate to the To-Do page
+            navigate('/todo');
+        },
+        onError: (error) => {
+            console.error('Login failed:', error);
+            // Handle error (e.g., show a notification)
+        }
     });
 
     const handleChange = (e) => {
@@ -21,8 +53,7 @@ const LoginPage = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Here you can add your login logic, e.g., API call
-        console.log('Login data:', formData);
+        mutation.mutate(formData); // Trigger the login mutation
     };
 
     return (
@@ -56,9 +87,16 @@ const LoginPage = () => {
                         required
                         margin="normal"
                     />
-                    <Box display="flex" justifyContent="center">
-                        <Button type="submit" variant="outlined" color="primary">
+                    <Box display="flex" justifyContent="center" sx={{ gap: 2 }}>
+                        <Button type="submit" variant="contained" color="primary">
                             Login
+                        </Button>
+                        <Button 
+                            variant="contained" 
+                            color="primary" 
+                            onClick={() => navigate('/register')}
+                        >
+                            Register
                         </Button>
                     </Box>
                 </form>

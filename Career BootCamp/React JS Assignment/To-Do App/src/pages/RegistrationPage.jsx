@@ -180,12 +180,12 @@ const RegistrationPage = () => {
                             style={{ display: 'block' }}
                         />
                     </Box>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
                         <Button 
                             type="submit" 
                             variant="contained" 
                             color="primary"
-                            sx={{ borderRadius: 2 }}
+                            sx={{ borderRadius: 2, width: '20%' }}
                         >
                             Register
                         </Button>
@@ -194,7 +194,7 @@ const RegistrationPage = () => {
                             variant="contained" 
                             color="primary" 
                             onClick={() => navigate('/login')}
-                            sx={{ borderRadius: 2 }}
+                            sx={{ borderRadius: 2, width: '20%' }}
                         >
                             Login
                         </Button>
