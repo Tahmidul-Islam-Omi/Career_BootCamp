@@ -17,9 +17,9 @@ const TaskUpdateDialog = ({ open, onClose, taskData, onChange, onSubmit }) => {
                 <TextField
                     autoFocus
                     margin="dense"
-                    label="Task Name"
-                    name="name"
-                    value={taskData.name}
+                    label="Task Title"
+                    name="title"
+                    value={taskData.title}
                     onChange={onChange}
                     fullWidth
                     sx={{ mb: 2 }}
@@ -39,7 +39,7 @@ const TaskUpdateDialog = ({ open, onClose, taskData, onChange, onSubmit }) => {
                     margin="dense"
                     label="Deadline"
                     name="deadline"
-                    type="date"
+                    type="datetime-local"
                     value={taskData.deadline}
                     onChange={onChange}
                     fullWidth
@@ -50,16 +50,12 @@ const TaskUpdateDialog = ({ open, onClose, taskData, onChange, onSubmit }) => {
                 />
                 <TextField
                     margin="dense"
-                    label="Priority (1-9)"
+                    label="Priority"
                     name="priority"
-                    type="number"
+                    type="text" // Changed to text to allow any input
                     value={taskData.priority}
                     onChange={onChange}
                     fullWidth
-                    inputProps={{
-                        min: 1,
-                        max: 9
-                    }}
                 />
             </DialogContent>
             <DialogActions sx={{ p: 2 }}>
@@ -82,4 +78,4 @@ const TaskUpdateDialog = ({ open, onClose, taskData, onChange, onSubmit }) => {
     );
 };
 
-export default TaskUpdateDialog; 
+export default TaskUpdateDialog;

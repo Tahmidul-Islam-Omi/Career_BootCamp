@@ -50,16 +50,12 @@ const TaskDialog = ({ open, onClose, taskData, onChange, onSubmit }) => {
                 />
                 <TextField
                     margin="dense"
-                    label="Priority (1-9)"
+                    label="Priority"
                     name="priority"
                     type="number"
                     value={taskData.priority}
                     onChange={onChange}
                     fullWidth
-                    inputProps={{
-                        min: 1,
-                        max: 9
-                    }}
                 />
             </DialogContent>
             <DialogActions sx={{ p: 2 }}>

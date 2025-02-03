@@ -1,21 +1,13 @@
-import { AccessTime, CheckCircle, Delete, Edit, Flag, RadioButtonUnchecked } from '@mui/icons-material';
-import { Box, Card, CardContent, Chip, IconButton, Stack, Typography } from '@mui/material';
-import CountdownTimer from './CountdownTimer';
+import { AccessTime, Edit, Delete, CheckCircle, RadioButtonUnchecked } from '@mui/icons-material';
+import { Box, Card, CardContent, IconButton, Typography } from '@mui/material';
 
 const TaskCard = ({ task, onEdit, onDelete, onToggleComplete }) => {
-    const getPriorityColor = (priority) => {
-        const num = parseInt(priority);
-        if (num >= 7) return 'error';
-        if (num >= 4) return 'warning';
-        return 'success';
-    };
-
     return (
         <Card 
             sx={{ 
                 borderRadius: 2,
                 boxShadow: 3,
-                opacity: task.completed ? 0.7 : 1,
+                opacity: task.is_completed ? 0.7 : 1,
                 '&:hover': {
                     boxShadow: 6,
                     transform: 'scale(1.02)',
@@ -27,28 +19,26 @@ const TaskCard = ({ task, onEdit, onDelete, onToggleComplete }) => {
                 <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <IconButton 
-                            onClick={() => onToggleComplete(task.name)}
-                            color={task.completed ? 'primary' : 'default'}
+                            onClick={() => onToggleComplete(task)}
+                            color={task.is_completed ? 'primary' : 'default'}
                         >
-                            {task.completed ? <CheckCircle /> : <RadioButtonUnchecked />}
+                            {task.is_completed ? <CheckCircle /> : <RadioButtonUnchecked />}
                         </IconButton>
                         <Typography 
                             variant="h6" 
                             sx={{ 
-                                color: 'primary.main',
-                                fontWeight: 'bold',
-                                textDecoration: task.completed ? 'line-through' : 'none'
+                                textDecoration: task.is_completed ? 'line-through' : 'none'
                             }}
                         >
-                            {task.name}
+                            {task.title}
                         </Typography>
                     </Box>
                     <Box>
                         <IconButton onClick={() => onEdit(task)}>
-                            <Edit color="primary" />
+                            <Edit />
                         </IconButton>
-                        <IconButton onClick={() => onDelete(task.name)}>
-                            <Delete color="error" />
+                        <IconButton onClick={() => onDelete(task.id)}>
+                            <Delete />
                         </IconButton>
                     </Box>
                 </Box>
@@ -57,45 +47,21 @@ const TaskCard = ({ task, onEdit, onDelete, onToggleComplete }) => {
                     variant="body1" 
                     sx={{ 
                         mb: 2,
-                        color: 'text.secondary',
-                        textDecoration: task.completed ? 'line-through' : 'none'
+                        textDecoration: task.is_completed ? 'line-through' : 'none'
                     }}
                 >
                     {task.description}
                 </Typography>
 
-                {!task.completed && <CountdownTimer deadline={task.deadline} />}
-
-                <Stack 
-                    direction="row" 
-                    spacing={2} 
-                    alignItems="center"
-                    justifyContent="space-between"
-                >
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Flag color={getPriorityColor(task.priority)} />
-                        <Chip 
-                            label={`Priority ${task.priority}`}
-                            color={getPriorityColor(task.priority)}
-                            size="small"
-                        />
-                    </Box>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <AccessTime color="action" />
-                        <Typography variant="body2" color="text.secondary">
-                            {task.deadline}
-                        </Typography>
-                    </Box>
-                </Stack>
-
-                {task.completed && (
-                    <Chip 
-                        label="Completed"
-                        color="success"
-                        size="small"
-                        sx={{ mt: 2 }}
-                    />
-                )}
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <AccessTime color="action" />
+                    <Typography variant="body2" color="text.secondary">
+                        {new Date(task.deadline).toLocaleDateString()}
+                    </Typography>
+                </Box>
+                <Typography variant="body2" color="text.secondary">
+                    Priority: {task.priority}
+                </Typography>
             </CardContent>
         </Card>
     );
