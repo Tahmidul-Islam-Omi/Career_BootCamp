@@ -1,6 +1,8 @@
-import { Button, Container, Typography } from '@mui/material';
+import { AccountCircle } from '@mui/icons-material';
+import { Box, Button, Container, IconButton, Typography } from '@mui/material';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import PriorityFilter from '../components/PriorityFilter';
 import Statistics from '../components/Statistics';
 import TaskDialog from '../components/TaskDialog';
@@ -24,6 +26,7 @@ const TodoApp = () => {
     const [currentTask, setCurrentTask] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedPriority, setSelectedPriority] = useState('');
+    const navigate = useNavigate();
 
     // Fetch todos
     const { data: tasks = [], isLoading } = useQuery({
@@ -193,6 +196,16 @@ const TodoApp = () => {
 
     return (
         <Container maxWidth="sm">
+            <Box sx={{ position: 'absolute', top: 16, right: 16 }}>
+                <IconButton 
+                    color="primary" 
+                    onClick={() => navigate('/profile')}
+                    sx={{ width: 48, height: 48 }}
+                >
+                    <AccountCircle sx={{ width: 32, height: 32 }} />
+                </IconButton>
+            </Box>
+
             <Typography 
                 variant="h4" 
                 component="h1" 

@@ -3,7 +3,7 @@ import { Cell, Legend, Pie, PieChart, ResponsiveContainer } from 'recharts';
 
 const Statistics = ({ tasks }) => {
     const totalTasks = tasks.length;
-    const completedTasks = tasks.filter(task => task.completed).length;
+    const completedTasks = tasks.filter(task => task.is_completed).length;
     const efficiency = totalTasks === 0 ? 0 : Math.round((completedTasks / totalTasks) * 100);
 
     const pieData = [

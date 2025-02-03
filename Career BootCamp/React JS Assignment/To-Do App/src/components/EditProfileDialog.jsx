@@ -10,7 +10,13 @@ const EditProfileDialog = ({ open, onClose, userInfo, onEdit }) => {
     };
 
     const handleSubmit = () => {
-        onEdit(formData);
+        const updateData = {
+            name: formData.name,
+            email: formData.email,
+            phone: formData.phone,
+            profile_picture: formData.profile_picture
+        };
+        onEdit(updateData);
     };
 
     return (
@@ -22,7 +28,7 @@ const EditProfileDialog = ({ open, onClose, userInfo, onEdit }) => {
                     margin="dense"
                     label="Name"
                     name="name"
-                    value={formData.name}
+                    value={formData.name || ''}
                     onChange={handleChange}
                     fullWidth
                     variant="outlined"
@@ -32,7 +38,7 @@ const EditProfileDialog = ({ open, onClose, userInfo, onEdit }) => {
                     margin="dense"
                     label="Email"
                     name="email"
-                    value={formData.email}
+                    value={formData.email || ''}
                     onChange={handleChange}
                     fullWidth
                     variant="outlined"
@@ -42,7 +48,7 @@ const EditProfileDialog = ({ open, onClose, userInfo, onEdit }) => {
                     margin="dense"
                     label="Phone"
                     name="phone"
-                    value={formData.phone}
+                    value={formData.phone || ''}
                     onChange={handleChange}
                     fullWidth
                     variant="outlined"
@@ -50,9 +56,9 @@ const EditProfileDialog = ({ open, onClose, userInfo, onEdit }) => {
                 />
                 <TextField
                     margin="dense"
-                    label="Username"
-                    name="username"
-                    value={formData.username}
+                    label="Profile Picture"
+                    name="profile_picture"
+                    value={formData.profile_picture || ''}
                     onChange={handleChange}
                     fullWidth
                     variant="outlined"
