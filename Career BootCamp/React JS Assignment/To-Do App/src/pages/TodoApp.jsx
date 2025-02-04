@@ -1,7 +1,7 @@
 import { AccountCircle } from '@mui/icons-material';
 import { Box, Button, Container, IconButton, Typography } from '@mui/material';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PriorityFilter from '../components/PriorityFilter';
 import Statistics from '../components/Statistics';
@@ -27,6 +27,14 @@ const TodoApp = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedPriority, setSelectedPriority] = useState('');
     const navigate = useNavigate();
+
+    // Check for access token
+    useEffect(() => {
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+            navigate('/login'); // Redirect to login if no token
+        }
+    }, [navigate]);
 
     // Fetch todos
     const { data: tasks = [], isLoading } = useQuery({

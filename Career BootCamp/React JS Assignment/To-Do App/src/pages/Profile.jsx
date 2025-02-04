@@ -1,17 +1,22 @@
 import { Box, Button, Container, Paper, Typography } from '@mui/material';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import EditProfileDialog from '../components/EditProfileDialog';
 
 const Profile = () => {
     const queryClient = useQueryClient();
+    const navigate = useNavigate();
     const [openEditDialog, setOpenEditDialog] = useState(false);
     const username = localStorage.getItem('username'); // Retrieve username from local storage
-    console.log('Retrieved username:', username); // Debug log
 
-    if (!username) {
-        return <div>No username found. Please log in.</div>; // Handle missing username
-    }
+    // Check for access token
+    useEffect(() => {
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+            navigate('/login'); // Redirect to login if no token
+        }
+    }, [navigate]);
 
     // Fetch user profile
     const { data: userInfo, isLoading, isError, error } = useQuery({
