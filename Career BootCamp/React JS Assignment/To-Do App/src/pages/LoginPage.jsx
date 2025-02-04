@@ -19,7 +19,7 @@ const LoginPage = () => {
 
     const mutation = useMutation({
         mutationFn: async (loginData) => {
-            const response = await fetch('http://3.109.211.104:8001/login', {
+            const response = await fetch('https://5nvfy5p7we.execute-api.ap-south-1.amazonaws.com/dev/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

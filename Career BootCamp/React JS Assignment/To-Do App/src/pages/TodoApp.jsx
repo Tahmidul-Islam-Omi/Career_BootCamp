@@ -33,7 +33,7 @@ const TodoApp = () => {
         queryKey: ['todos'],
         queryFn: async () => {
             const token = localStorage.getItem('access_token');
-            const response = await fetch('http://3.109.211.104:8001/todos', {
+            const response = await fetch('https://5nvfy5p7we.execute-api.ap-south-1.amazonaws.com/dev/todos', {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -49,7 +49,7 @@ const TodoApp = () => {
     const createTodoMutation = useMutation({
         mutationFn: async (newTodo) => {
             const token = localStorage.getItem('access_token');
-            const response = await fetch('http://3.109.211.104:8001/todo', {
+            const response = await fetch('https://5nvfy5p7we.execute-api.ap-south-1.amazonaws.com/dev/todo', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -73,7 +73,7 @@ const TodoApp = () => {
     const updateTodoMutation = useMutation({
         mutationFn: async ({ id, updatedTodo }) => {
             const token = localStorage.getItem('access_token');
-            const response = await fetch(`http://3.109.211.104:8001/todo/${id}`, {
+            const response = await fetch(`https://5nvfy5p7we.execute-api.ap-south-1.amazonaws.com/dev/todo/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -97,7 +97,7 @@ const TodoApp = () => {
     const deleteTodoMutation = useMutation({
         mutationFn: async (id) => {
             const token = localStorage.getItem('access_token');
-            const response = await fetch(`http://3.109.211.104:8001/todo/${id}`, {
+            const response = await fetch(`https://5nvfy5p7we.execute-api.ap-south-1.amazonaws.com/dev/todo/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`
