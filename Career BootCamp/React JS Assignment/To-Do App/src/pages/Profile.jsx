@@ -7,21 +7,32 @@ const Profile = () => {
     const queryClient = useQueryClient();
     const [openEditDialog, setOpenEditDialog] = useState(false);
     const username = localStorage.getItem('username'); // Retrieve username from local storage
+    console.log('Retrieved username:', username); // Debug log
+
+    if (!username) {
+        return <div>No username found. Please log in.</div>; // Handle missing username
+    }
 
     // Fetch user profile
-    const { data: userInfo, isLoading } = useQuery({
+    const { data: userInfo, isLoading, isError, error } = useQuery({
         queryKey: ['profile'],
         queryFn: async () => {
             const token = localStorage.getItem('access_token');
+            console.log('Fetching profile for username:', username); // Debug log
             const response = await fetch(`https://5nvfy5p7we.execute-api.ap-south-1.amazonaws.com/dev/profile/${username}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
             });
+            console.log('Response status:', response.status); // Debug log
             if (!response.ok) {
-                throw new Error('Failed to fetch profile');
+                const errorData = await response.text();
+                console.error('API Error:', errorData); // Debug log
+                throw new Error(`Failed to fetch profile: ${errorData}`);
             }
-            return response.json();
+            const data = await response.json();
+            console.log('Received data:', data); // Debug log
+            return data;
         }
     });
 
@@ -53,8 +64,11 @@ const Profile = () => {
     };
 
     if (isLoading) return <div>Loading...</div>;
-    if (updateProfileMutation.isError) {
-        return <div>Error updating profile: {updateProfileMutation.error.message}</div>;
+    if (isError) {
+        return <div>Error loading profile: {error.message}</div>;
+    }
+    if (!userInfo) {
+        return <div>No profile data found</div>;
     }
 
     return (
